@@ -1,0 +1,270 @@
+There a few different versions of https:
+1. persistent: it keeps the TCP connection open for multiple request/response pairs
+2. non-persistent: it creates a new TCP connection for each request/response pair
+
+HTTP/1.0 only supported non-persistent HTTP
+HTTP/1.1 supports both persistent and non-persistent HTTP, but persistent is the default
+HTTP/2 only supports persistent HTTP, mitigated the head-of-line (HOL) blocking problem
+HOL blocking problem: if a packet is lost, all subsequent packets must wait until the lost packet is retransmitted and
+received
+HTTP/2 mitigate this by allowing multiple streams within a single TCP connection
+Each stream has a unique identifier and can be interleaved with other streams
+This allows multiple request/response pairs to be in flight at the same time
+This is called multiplexing
+HTTP/3 (QUIC) is the latest version of HTTP and is built on top of UDP instead of TCP
+This allows for faster connection establishment and improved performance in the presence of packet loss
+QUIC also supports multiplexing and has built-in encryption (TLS 1.3)
+QUIC is currently being adopted by major browsers and websites
+Any of these versions of HTTP can be used with HTTPS, which is HTTP over TLS/SSL
+
+TLS (Transport Layer Security) is the successor to SSL (Secure Sockets Layer)
+TLS/SSL provides encryption, integrity, and authentication for HTTP
+When a client connects to a server over HTTPS, the following steps occur:
+1. The client sends a "ClientHello" message to the server, which includes the client's supported TLS versions, cipher suites, and a random number
+2. The server responds with a "ServerHello" message, which includes the server's chosen TLS version, cipher suite, and a random number
+3. The server sends its digital certificate to the client, which includes the server's public key and is signed by a trusted certificate authority (CA)
+4. The client verifies the server's certificate by checking the signature and ensuring that the certificate is valid and not expired
+5. The client and server perform a key exchange to generate a shared secret key, which is used to encrypt the communication
+6. The client and server send "Finished" messages to each other, which are encrypted with the shared secret key
+7. The client and server can now securely exchange HTTP messages over the encrypted connection
+TLS/SSL also provides integrity by using message authentication codes (MACs) to ensure that
+the messages have not been tampered with during transmission
+TLS/SSL also provides authentication by using digital certificates to verify the identity of the server (and optionally the client)
+Overall, HTTPS provides a secure way to transmit sensitive information over the internet, such as passwords, credit card numbers, and personal data.
+
+SMTP (Simple Mail Transfer Protocol) is the protocol used to send email messages between servers
+SMTP is a text-based protocol that uses commands and responses to communicate between the client and server
+SMTP typically uses port 25 for communication, but can also use port 587 for secure communication (using STARTTLS)
+When a client wants to send an email, it connects to the SMTP server and sends the following commands:
+1. HELO/EHLO: the client introduces itself to the server
+2. MAIL FROM: the client specifies the sender's email address
+3. RCPT TO: the client specifies the recipient's email address
+4. DATA: the client sends the email message, including the headers and body
+5. QUIT: the client closes the connection to the server
+The server responds to each command with a status code and message, indicating whether the command was successful or not
+For example, a successful MAIL FROM command would receive a 250 status code, while an unsuccessful RCPT TO command would receive a 550 status code
+SMTP servers can also use authentication to verify the identity of the client before allowing it to send email
+This is typically done using the AUTH command, which allows the client to provide a username and password
+Overall, SMTP is a simple and widely used protocol for sending email messages over the internet.
+
+DNS (Domain Name System) is a hierarchical and distributed naming system for computers, services, or other resources connected to the internet or a private network
+DNS translates human-readable domain names (e.g., www.example.com) into IP addresses
+It also does load balancing, email routing, and other functions
+DNS is organized into a hierarchy of domains, with the root domain at the top, followed by top-level domains (TLDs), second-level domains, and subdomains
+The DNS hierarchy is managed by a network of DNS servers, which are responsible for storing and distributing DNS records
+When a client wants to resolve a domain name, it sends a DNS query to a DNS resolver (usually provided by the client's ISP)
+The resolver then queries a series of DNS servers to find the IP address associated with the domain name
+The resolver starts by querying a root DNS server, which responds with a referral to a TLD DNS server (e.g., .com, .org, .net)
+The resolver then queries the TLD DNS server, which responds with a referral to the authoritative DNS server for the domain
+The resolver then queries the authoritative DNS server, which responds with the IP address associated with the domain name
+The resolver then caches the IP address for a period of time (specified by the DNS record's TTL) to improve performance for future queries
+DNS records can include various types of information, such as:
+- A records: map a domain name to an IPv4 address
+- AAAA records: map a domain name to an IPv6 address
+- CNAME records: map a domain name to another domain name (alias)
+- MX records: specify the mail servers responsible for receiving email for a domain
+- TXT records: store arbitrary text data, often used for verification and security purposes (e.g., SPF, DKIM, DMARC)
+Overall, DNS is a critical component of the internet infrastructure, enabling users to access websites and services using human-readable domain names instead of IP addresses.
+The levels of the hierarchy are:
+1. Root level: represented by a dot (.) It contains information about the top-level domains (TLDs).
+2. Top-Level Domain (TLD): examples include .com, .org, .net, .edu, and country-code TLDs like .uk, .ca, .jp.
+3. Second-Level Domain (authoritative): this is the domain name registered by an individual or organization (e.g., example in example.com, nyu.edu).
+4. Subdomain: a domain that is part of a larger domain (e.g., www in www.example.com).
+5. Hostname: the specific name of a device or service within a domain (e.g., mail in mail.example.com).
+Once you buy an authoritative domain, you can create as many subdomains and hostnames as you wish.
+
+Root DNS servers are owned by ICANN (Internet Corporation for Assigned Names and Numbers) and are operated by various organizations around the world.
+There are 13 root DNS servers, labeled A through M, each with multiple instances distributed globally
+TLD DNS servers are operated by various organizations, such as Verisign (for .com and .net), Public Interest Registry (for .org), and country-specific organizations for ccTLDs
+Authoritative DNS servers are typically operated by the organization that owns the domain, or by a third-party DNS hosting provider
+DNS resolvers are typically operated by ISPs, but can also be run by individuals or organizations (e.g., Google Public DNS, Cloudflare DNS)
+DNSSEC (Domain Name System Security Extensions) is a set of extensions to DNS that provide authentication and integrity for DNS data
+DNSSEC uses digital signatures to verify the authenticity of DNS records and prevent cache poisoning attacks
+Overall, DNS is a complex and critical system that enables the functioning of the internet
+
+Top Level Domain (TLD) servers are responsible for managing the top-level domains (TLDs) in the DNS hierarchy
+TLD servers store information about the authoritative DNS servers for each domain within their TLD
+When a DNS resolver queries a TLD server, the TLD server responds with a referral to the authoritative DNS server for the requested domain
+For example, if a resolver queries the .com TLD server for the domain example.com, the TLD server will respond with the IP address of the authoritative DNS server for example.com
+TLD servers are operated by various organizations, such as Verisign (for .com and .net), Public Interest Registry (for .org), and country-specific organizations for ccTLDs
+TLD servers are typically highly available and distributed globally to ensure fast response times for DNS queries
+Overall, TLD servers play a critical role in the DNS hierarchy by managing the top-level domains and providing referrals to authoritative DNS servers.
+Authoritative DNS servers are responsible for storing and providing DNS records for a specific domain
+When a DNS resolver queries an authoritative DNS server, the server responds with the requested DNS records (e.g., A records, MX records, CNAME records)
+Authoritative DNS servers are typically operated by the organization that owns the domain, or by a third-party DNS hosting provider
+Authoritative DNS servers can be primary (master) or secondary (slave)
+Primary authoritative DNS servers are the main source of DNS records for a domain and are responsible for updating and maintaining the records
+Secondary authoritative DNS servers receive copies of the DNS records from the primary server and provide redundancy and load balancing
+Authoritative DNS servers can also implement DNSSEC to provide authentication and integrity for DNS records
+Overall, authoritative DNS servers are a critical component of the DNS hierarchy, providing the necessary information to resolve domain names to IP addresses
+DNS resolvers are responsible for resolving domain names to IP addresses on behalf of clients
+When a client wants to resolve a domain name, it sends a DNS query to a DNS resolver (usually provided by the client's ISP)
+The resolver then queries a series of DNS servers to find the IP address associated with the domain name
+The resolver starts by querying a root DNS server, which responds with a referral to a TLD DNS server (e.g., .com, .org, .net)
+The resolver then queries the TLD DNS server, which responds with a referral to the authoritative DNS server for the domain
+The resolver then queries the authoritative DNS server, which responds with the IP address associated with the domain name
+The resolver then caches the IP address for a period of time (specified by the DNS record's TTL) to improve performance for future queries
+DNS resolvers can also implement DNSSEC to verify the authenticity of DNS records and prevent cache poisoning attacks
+Overall, DNS resolvers are a critical component of the DNS hierarchy, enabling clients to access websites and services using human-readable domain names instead of IP addresses.
+
+Local DNS servers are DNS resolvers that are located close to the client, typically within the same network or geographic region
+Local DNS servers can provide faster response times for DNS queries by reducing the distance that the query must travel
+Local DNS servers can also cache DNS records to improve performance for frequently accessed domains
+When a client sends a DNS query to a local DNS server, the server first checks its cache to see if it has the requested DNS record
+If the record is found in the cache and is still valid (i.e., not expired), the local DNS server responds with the cached record
+If the record is not found in the cache or is expired, the local DNS server forwards the query to an upstream DNS resolver (e.g., the ISP's DNS resolver)
+The upstream resolver then follows the standard DNS resolution process to find the IP address associated with the domain name
+Local DNS servers can also implement DNSSEC to verify the authenticity of DNS records and prevent cache poisoning attacks
+Overall, local DNS servers are an important component of the DNS infrastructure, providing faster and more efficient DNS resolution for clients.
+
+There are two types of DNS queries: recursive and iterative
+In an iterative query, the DNS resolver queries each DNS server in the hierarchy one at a time, starting with the root server and working its way down to the authoritative server for the domain
+Each server responds with either the requested DNS record or a referral to the next server in the hierarchy
+The resolver continues this process until it receives the requested DNS record or determines that the domain does not exist
+In a recursive query, the DNS resolver takes on the responsibility of resolving the domain name on behalf of the client
+The resolver queries the root server, TLD server, and authoritative server as needed, and returns the final DNS record to the client
+The client does not need to be aware of the individual DNS servers involved in the resolution process
+Recursive queries are typically used by local DNS servers and DNS resolvers provided by ISPs, while iterative queries are used by authoritative DNS servers and some DNS resolvers
+Overall, both types of DNS queries are important for the functioning of the DNS system
+DNS caching is the process of storing DNS records locally to improve performance and reduce the load on DNS servers
+When a DNS resolver receives a DNS record in response to a query, it stores the record in its cache for a period of time specified by the record's Time to Live (TTL) value
+The TTL value is set by the authoritative DNS server and indicates how long the record should be considered valid
+When a client sends a DNS query, the resolver first checks its cache to see if it has the requested DNS record
+If the record is found in the cache and is still valid (i.e., not expired), the resolver responds with the cached record
+If the record is not found in the cache or is expired, the resolver forwards the query to an upstream DNS server to retrieve the record
+DNS caching can significantly improve the performance of DNS resolution, especially for frequently accessed domains
+However, it can also lead to stale or outdated records if the TTL value is set too high
+To mitigate this, DNS resolvers can implement cache eviction policies to remove stale records from the cache
+Overall, DNS caching is an important component of the DNS infrastructure, providing faster and more efficient DNS resolution for clients.
+DNS spoofing (also known as DNS cache poisoning) is a type of cyber attack where an attacker manipulates the DNS cache of a DNS resolver to redirect traffic from a legitimate domain to a malicious IP address
+This can be done by injecting false DNS records into the cache, causing the resolver to return the malicious IP address instead of the legitimate one
+DNS spoofing can be used to carry out various types of attacks, such as phishing, malware distribution
+
+DNS: distributed database storing resource records (RR)
+RR: (name, value, type, ttl)
+type A:
+maps hostname to IPv4 address
+type NS:
+maps domain to authoritative DNS server
+type CNAME:
+maps alias to canonical name
+type MX:
+maps domain to mail server
+type AAAA:
+maps hostname to IPv6 address
+
+requester can specify in the query if it wants recursive or iterative query but the server can ignore that
+
+DNS protocal message format:
+header (fixed 12 bytes)
+ID (16 bits): identifies the query
+flags (16 bits): QR (1 bit): query/response
+Opcode (4 bits): type of query
+AA (1 bit): authoritative answer
+TC (1 bit): truncated message
+RD (1 bit): recursion desired
+RA (1 bit): recursion available
+Z (3 bits): reserved for future use
+RCODE (4 bits): response code
+QDCOUNT (16 bits): number of entries in the question section
+ANCOUNT (16 bits): number of resource records in the answer section
+NSCOUNT (16 bits): number of name server resource records in the authority section
+ARCOUNT (16 bits): number of resource records in the additional section
+question section (variable length)
+name (variable length): domain name being queried
+type (16 bits): type of query (e.g., A, NS, CNAME, MX, AAAA)
+class (16 bits): class of query (usually IN for internet)
+answer section (variable length)
+name (variable length): domain name being queried
+type (16 bits): type of record (e.g., A, NS, CNAME, MX, AAAA)
+class (16 bits): class of record (usually IN for internet)
+ttl (32 bits): time to live (in seconds)
+rdlength (16 bits): length of the rdata field
+rdata (variable length): resource data (e.g., IP address for A record)
+authority section (variable length)
+name (variable length): domain name being queried
+type (16 bits): type of record (e.g., NS)
+class (16 bits): class of record (usually IN for internet)
+ttl (32 bits): time to live (in seconds)
+rdlength (16 bits): length of the rdata field
+rdata (variable length): resource data (e.g., hostname of authoritative DNS server for NS record)
+additional section (variable length)
+name (variable length): domain name being queried
+type (16 bits): type of record (e.g., A, AAAA)
+class (16 bits): class of record (usually IN for internet)
+ttl (32 bits): time to live (in seconds)
+rdlength (16 bits): length of the rdata field
+rdata (variable length): resource data (e.g., IP address for A record, IPv6 address for AAAA record)
+
+Getting your info into the DNS:
+1. Register a domain name with a domain registrar (e.g., GoDaddy, Namecheap, Network Solutions)
+2. Set up authoritative DNS servers for your domain (either self-hosted or through a DNS hosting provider)
+3. Create DNS records for your domain (e.g., A records, MX records, CNAME records)
+4. Configure your domain registrar to point to your authoritative DNS servers
+5. Wait for DNS propagation (can take up to 48 hours)
+6. Verify that your DNS records are working using tools like nslookup or dig
+7. Optionally, set up DNSSEC to provide authentication and integrity for your DNS records
+Overall, getting your info into the DNS involves registering a domain name, setting up authoritative DNS servers, creating DNS records, and configuring your domain registrar to point to your DNS servers.
+
+DNS security
+DDoS attacks on DNS servers can be mitigated by using techniques such as rate limiting, IP blacklisting, and traffic filtering
+DNSSEC (Domain Name System Security Extensions) is a set of extensions to DNS that provide authentication and integrity for DNS data
+DNSSEC uses digital signatures to verify the authenticity of DNS records and prevent cache poisoning attacks
+DNSSEC involves signing DNS records with a private key and publishing the corresponding public key in the DNS
+When a DNS resolver receives a DNS record, it can verify the digital signature using the public key to ensure that the record has not been tampered with
+DNSSEC also involves a chain of trust, where each level of the DNS hierarchy is signed by the level above it
+This allows resolvers to verify the authenticity of DNS records all the way up to the root level
+Overall, DNS security is an important consideration for the DNS infrastructure, and techniques such as DDoS mitigation and DNSSEC can help protect against various types of attacks.
+
+Socket programming
+A socket is an endpoint for communication between two machines
+A socket is identified by an IP address and a port number
+There are two types of sockets: stream sockets (TCP) and datagram sockets (UDP)
+Stream sockets provide a reliable, connection-oriented communication channel
+Datagram sockets provide an unreliable, connectionless communication channel
+To create a socket in Python, you can use the socket module
+import socket
+Two socket types:
+UDP (datagram) and TCP (stream)
+UDP: connectionless, unreliable, no congestion control, no flow control
+TCP: connection-oriented, reliable, congestion control, flow control
+Application example:
+1.client reads a line of characters from its keyboard and sends data to server
+2.server receives the data and converts all characters to uppercase
+3.server sends the modified data back to client
+4.client receives the modified data and prints it to its display
+
+UDP: no "connection" between client and server
+- no handshaking before sending data
+- sender explicitly attaches IP address and port of destination to each packet
+- receiver extracts the IP address and port from received packet
+- server must extract the client's IP address and port from received packet to reply to client
+
+UDP socket example (server):
+from socket import *
+serverPort = 12000
+serverSocket = socket(AF_INET, SOCK_DGRAM)
+serverSocket.bind(('', serverPort))
+print("The server is ready to receive")
+while True:
+    message, clientAddress = serverSocket.recvfrom(2048)
+    print("Received message:", message)
+    modifiedMessage = message.decode().upper()
+    serverSocket.sendto(modifiedMessage.encode(), clientAddress)
+
+Socket programming with TCP:
+client must contact server:
+- server process must be running before client
+- server must have created socket door and be waiting for connection
+
+code:
+from socket import *
+serverName = 'localhost'
+serverPort = 12001
+clientSocket = socket(AF_INET, SOCK_STREAM)
+clientSocket.connect((serverName, serverPort))
+message = input('Input lowercase sentence: ')
+clientSocket.send(message.encode())
+modifiedMessage = clientSocket.recv(1024)
+print('From Server:', modifiedMessage.decode())
+clientSocket.close()
