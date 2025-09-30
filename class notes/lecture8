@@ -1,0 +1,127 @@
+Levels of the DNS hierarchy:
+- Root Level
+- Top-Level Domain (TLD)s
+- Second-Level Domain (SLDs)
+- Subdomains
+- Hostnames
+
+NS Records:
+- NS records are used to specify the authoritative name servers for a domain.
+- They indicate which servers are responsible for handling DNS queries for that domain.
+A -IPV4 address
+AAAA -IPV6 address
+CNAME - Canonical Name (alias for another domain)
+
+dig command:
+- The `dig` command is a network administration command-line tool for querying DNS name servers.
+- It is used to retrieve information about DNS records for a specific domain.
+- Example usage: `dig example.com` to get the A record for example.com.
+
+nslookup command:
+- The `nslookup` command is another command-line tool used to query DNS servers.
+- It can be used to find the IP address associated with a domain name or vice versa.
+- Example usage: `nslookup -q=CNAME google.com` to get the CNAME record for google.com.
+
+MX Records: (SMTP servers)
+- MX records are used to specify the mail servers responsible for receiving email on behalf of a domain.
+- They include a priority value to indicate the order in which mail servers should be used.
+- Example: An MX record for example.com might point to mail.example.com with a priority of 10.
+
+P2P Applications:
+- Peer-to-peer (P2P) applications allow direct communication between users without relying on a central server.
+- Examples of P2P applications include file sharing networks (e.g., BitTorrent), VoIP services (e.g., Skype), and blockchain networks (e.g., Bitcoin).
+- P2P applications often use distributed hash tables (DHTs) to locate resources and peers in the network.
+
+File distribution time: client server
+- In a client-server model, the file distribution time is determined by the server's upload bandwidth and the number of clients downloading the file.
+- The server must handle all requests, which can lead to bottlenecks if many clients are trying to download the file simultaneously.
+- The total distribution time can be approximated by the formula:
+  T = (File Size / Server Upload Bandwidth) + (File Size / Client Download Bandwidth) * Number of Clients
+
+  time to send one copy = F/u_s
+    time to send N copies = NF/u_s
+    time for client to download = F/d_min
+    total time = max(NF/u_s, F/d_min)
+
+File distribution time: P2P
+- In a P2P model, the file distribution time is influenced by the upload bandwidth of all peers in the network.
+- Each peer can download and upload parts of the file simultaneously, which can significantly reduce the overall distribution time.
+- The total distribution time can be approximated by the formula:
+  T = max(F/u_s, F/d_min, NF/(u_s + Σu_i))
+  where Σu_i is the sum of the upload bandwidths of all peers.
+    time to send one copy = F/u_s
+    time to send N copies = NF/u_s
+    time for client to download = F/d_min
+    total time = max(F/u_s, F/d_min, NF/(u_s + Σu_i))
+
+P2P file distribution: BitTorrent
+- BitTorrent is a popular P2P file distribution protocol that breaks files into smaller pieces and distributes them among peers.
+- Peers download pieces of the file from multiple sources simultaneously, which increases download speed and reduces the load on any single peer.
+- BitTorrent uses a tracker to help peers find each other and exchange pieces of the file.
+
+tracker: tracks peers participating in torrent
+torrent: group of peers exchanging chunks of a file
+seeder: peer with complete file
+leecher: peer without complete file
+
+1. Peer joins torrent by contacting tracker
+2. Peer requests chunks from other peers
+3. Peer uploads chunks to other peers
+4. Peer leaves torrent when done
+
+Bit Torrent: tit-for-tat
+Alice optimistically unchokes Bob
+Alice becomes one of Bob's top-four-providers; Bob reciprocates
+Bob becomes one of Alice's top-four providers
+
+Video streaming and CDNs
+Streaming multimedia: DASH (Dynamic, Adaptive Streaming over HTTP)
+server:
+- divides video file into multiple chunks
+- each chunk encoded at multiple different rates
+- different rate encodings stored in different files
+- files replicated in various CDN nodes
+- manifest file: provides URLs for different chunks
+
+client:
+-periodically estimates server-to-client bandwidth
+-consulting manifest, requests one chunk at a time
+    - chooses maximum coding rate sustainable given current bandwidth
+
+- intelligence at client: client determines
+    - when to request chunk (so that buffer starvation, or overflow does not occur)
+
+Content distribution networks (CDNs)
+challenge: how to stream content ( selected from millions of videos) to hundreds of thousands of simultaneous users?
+option 1: single, large mega server
+    - bottlenecked by outgoing link
+option 2: replicate content on many servers
+    - how to direct user requests to appropriate server?
+    enter deep: CDNs
+CDN: network of servers that replicate content close to users
+- goal: reduce latency, reduce load on any one server
+- e.g., Akamai, Cloudflare, Amazon CloudFront, Google Cloud CDN
+bring home: smaller number (10s)of larger clusters in POPs near access nets
+- used by Limelight, Akamai, Cloudflare
+CDN: how to direct user requests to appropriate server?
+- DNS-based redirection
+- HTTP redirection
+- Anycast routing
+
+subscriber requests content, service provider returns manifest file
+using manidest, client retrieves content at highest supportable rate
+may choose different rate or copy if network pat congested
+
+OTT (over-the-top) video
+- video provided as a service directly to users over the Internet
+- bypassing traditional cable or satellite TV providers
+- examples: Netflix, YouTube, Hulu, Amazon Prime Video
+- OTT services often use CDNs to deliver content efficiently to users worldwide
+- OTT video can be accessed on various devices, including smartphones, tablets, smart TVs, and computers
+
+TRANSPORT LAYER
+Transport layer protocols
+- TCP (Transmission Control Protocol)
+- UDP (User Datagram Protocol)
+- services not available:
+    - delay guarantees
