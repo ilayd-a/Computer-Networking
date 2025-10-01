@@ -1,0 +1,91 @@
+Bit torrent characteristics:
+tit-for-tat strategy
+peer discovery
+the data is divided into chunks and pieces
+you are incentivised to upload at a higher rate
+you can download from multiple peers at once
+you can upload to multiple peers at once
+you can download and upload at the same time
+
+video streaming:
+DASH (Dynamic Adaptive Streaming over HTTP):
+- video is divided into segments
+- each segment is encoded at multiple bitrates
+- the client can switch between bitrates based on network conditions
+- the client can buffer segments to avoid interruptions
+
+There are two transport layer protocols: TCP and UDP
+The core difference is that TCP is connection-oriented and reliable, while UDP is connectionless and unreliable.
+
+Multiplexing and demultiplexing:
+Multiplexing at sender: handle data from multiple sockets, add header to identify socket, send to network layer
+Demultiplexing at receiver: receive from network layer, use header to identify socket, deliver to correct socket
+
+What things are included in these headers?
+Source port number
+Destination port number
+
+How demultiplexing works:
+When a segment arrives, the transport layer uses the destination port number to determine which socket to deliver the
+data to. If there is no socket with that port number, the segment is discarded.
+
+Connectionless demultiplexing (UDP):
+The server has a single socket that is bound to a well-known port number.
+The client has a socket that is bound to an ephemeral port number.
+When a client sends a datagram to the server, it includes its own IP address and port number in the datagram header.
+When the server receives the datagram, it uses the destination port number to deliver the datagram to the correct socket.
+The server can reply to the client by sending a datagram to the client's IP address and port number.
+The server can handle multiple clients with a single socket.
+The server uses the 2-tuple (destination port number, destination IP address) to identify the socket.
+The server uses the 4-tuple (source IP address, source port number, destination IP address, destination port number) to identify the client.
+
+Connection-oriented demultiplexing (TCP):
+A server has a single socket that is bound to a well-known port number.
+A client has a socket that is bound to an ephemeral port number.
+When a client sends a segment to the server, it includes its own IP address and port number in the segment header.
+When the server receives the segment, it uses the destination port number to deliver the segment to the correct socket.
+The server can reply to the client by sending a segment to the client's IP address and port number.
+The server can handle multiple clients by creating a new socket for each client.
+The server uses a 4-tuple (source IP address, source port number, destination IP address, destination port number) to identify each connection.
+The server uses the 4-tuple to deliver segments to the correct socket.
+
+Connectionless transport: UDP
+User datagram protocol (UDP)
+Unreliable, connectionless service
+No connection establishment (no handshake) (each UDP segment is independent)
+No connection state at sender or receiver
+No flow control, no congestion control
+Best-effort delivery: may lose, reorder, duplicate segments
+Lightweight: small header (8 bytes)
+No round trip time (RTT) delay for connection setup
+Used for applications that need low latency and can tolerate some loss (e.g., DNS, VoIP, online games)
+If relipable transfer is need ed, it must be implemented in the application layer (e.g., using sequence numbers and acknowledgments)
+UDP sender actions:
+-is passed an application-layer message
+-determines UDP segment header fields values
+-creates UDP segment
+-passes segment to network layer (IP)
+UDP receiver actions:
+-reveives UDP segment from network layer (IP)
+-checks UDP checksum header value
+-extracts application-layer message
+-demultiplexes to correct socket
+
+UDP checksum:
+Used to detect errors in the transmitted segment
+We send sum numbers and a checksum taht has the sum of the numbers
+The receiver computes the sum of the received numbers and the checksum
+If the result is not equal to the expected value, there is an error in the segment
+The checksum is optional in IPv4, but mandatory in IPv6
+The checksum is computed over the UDP header, the data, and a pseudo-header that includes the source and destination IP addresses, protocol number, and UDP length
+The checksum is computed using one's complement
+If the checksum is 0, it is transmitted as all 1s
+If the checksum is not 0, it is transmitted as is
+The receiver computes the checksum and compares it to the received checksum
+If they are not equal, the segment is discarded
+If they are equal, the segment is delivered to the application layer
+
+Principles of reliable data transfer:
+1. Error detection: the receiver can detect errors in the received segment
+2. Acknowledgments: the receiver sends an acknowledgment (ACK) to the sender to indicate that the segment was received correctly
+3. Retransmissions: if the sender does not receive an ACK within a certain time, it retransmits the segment
