@@ -1,0 +1,42 @@
+Multiplexing: adding headers(port numbers)
+demultiplexing: reading headers and sending to correct socket
+For UDP we only need the destination port number
+For TCP we need both source and destination port numbers
+
+Reliable data transfer
+rdt_send()(data): called from above. passed data to deliver to receiver upper layer
+udt_send()(header+data): called by rdt to transfer packet over unreliable channel to receiver
+udt_rcv()(header+data): called when packet arrives on receiver side of channel
+deliver_data()(data): called by rdt to deliver data to upper layer
+
+rdt1.0: reliable transfer over a reliable channel
+- underlying channel perfectly reliable
+- no bit errors, no loss
+- separate FSMs for sender, receiver:
+Sender: sends data into underlying channel
+Receiver: reads data from underlying channel
+
+rdt3.0: channel with bit errors
+- underlying channel may flip bits in packet
+  - checksum(e.g.Internet checksum) to detect bit errors
+- the question: how to recover from errors?
+  -acknowledgments(ACKS): receiver explicitly tells sender that packet was received OK
+    -negative acknowledgments(NAKS): receiver explicitly tells sender that packet was received in error
+    -sender retransmits packet on the receipt of NAK or timeout
+    -timeout: if sender doesn't receive ACK/NAK within timeout interval, it retransmits
+  What happens if ACK/NAK corrupted?
+  -sender doesn't know what happened to packet or ACK/NAK
+    -solution: sender adds sequence number to each packet
+  what is sequence number?
+    -sequence number is 0 or 1
+    -1 bit sequence number sufficient
+    -sender alternates sequence number for each packet
+    -receiver only needs to remember last packet received
+    -if packet has different seq #, it's a new packet
+    -if packet has same seq # as last packet, it's a retransmission of last packet
+    -receiver sends ACK/NAK with seq # of packet being ACKed/NAK
+
+  we also covered rdt2.0, rdt2.1, rdt2.2 and rdt3.0
+
+
+
