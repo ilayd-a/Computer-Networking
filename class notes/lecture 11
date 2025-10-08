@@ -1,0 +1,96 @@
+rdt3.0: channels with errors and loss
+new channel assumption: underlying channel can also lose packets (data, ACKs)
+  - checksum, sequence #s, ACKs, retransmisssions will be of help.. but not quite enough
+
+How do humans handle lost sender-to-receiver words in conversation?
+
+Performance of rdt3.0 (stop and wait)
+U_sender: utilization - fraction of time sender busy sending
+example: 1 Gbps link, 15 ms prop. delay, 8000 bit packet
+   - time to transmit packet into channel:
+   D_trans= L/R = 8000 bits/10^9 bps = 8 microseconds
+   - round trip time:
+    RTT = 2*D_prop = 30 ms
+    - U_sender = (L/R)/(RTT + L/R) = 8 microseconds/(30 ms + 8 microseconds) = 0.00027
+    - only 0.027% of time spent sending!
+    - rest of time spent waiting for ACK
+    - how to improve U_sender?
+    - send more packets without waiting for ACKs: pipelining
+    - sender allows multiple "in-flight" packets
+    - but we need to make sure that they go in order so we need to add more sequence numbers as indexes
+if we send 3 packets instead of 1:
+U_sender = (3L/R)/(RTT + L/R) = 3*8 microseconds/(30 ms + 8 microseconds) = 0.00081
+- only 0.081% of time spent sending!
+- rest of time spent waiting for ACK
+
+Go-Back-N: sender
+-sender: "window" of up to N, consecutive transmitted but unAcKed pkts
+    - k-bit seq # in pkt header
+-cumulative ACK: ACK(n): ACKs all pkts up to, including seq # n
+    - on receiving ACK(n): move window forward to begin at n+1
+-timer for oldest in-flight packer
+-timeout(n):retransmit packet n and all higher seq # pkts in window
+
+Go-Back-N: receiver
+-ACK-only: always send ACK for correctly-received pkt so far, with highest in-order seq#
+    - may generate duplicate ACKs
+    - need only remember expected seq #
+-on receipt of out-of-order pkt:
+   -can discard (don't buffer) or buffer: an implementation decision
+   -re-ACK pkt with highest in-order seq #
+
+Selective Repeat
+-receiver individually acknowledges all correctly received pkts
+    -buffers packets, as needed, for eventual in-order delivery to upper layer
+-sender times out and retransmits only those pkts that may have been lost
+    -receiver must have sufficient buffer space for out-of-order pkts
+-sequence # space must be at least twice the window size
+
+Connection-oriented transport: TCP
+TCP:overview
+-point-to-point: one sender, one receiver
+-reliable, in-order byte stream: no message boundaries
+-full duplex data: both sides can send and receive simultaneously, MSS: maximum segment size
+-cumulative ACKs
+-pipelining: TCP congestion and flow control set window size
+-connection-oriented: handshaking(exchange of control messages) initilizes sender, receiver state before data exchange
+-flow controlled: sender will not overwhelm receiver
+
+congestion is ensuring is that the entire network is not congested
+TCP requires handshakes, establishment of connections, they allign on some initial parameters (Window size, starting sequence number,
+selective repeit or standard go back n)
+
+You can already start to see that it is quite a bit more complicated than UDP.
+We have 6 rows each of them are 4 bytes. We have 24 bytes worth of TCP headers.
+Source port and destination port are always the first two headers.
+Then we have the sequence numbers
+Then we have an acknowledgment number as well - to show which sequence number is being acknowledged
+we have out application layer data
+we ahve a checksum for tcp as well
+we have options, by default no options are sent
+then we include the header length(how many bytes)
+a few flags for the connection
+then we have receive window
+we have some flags that are meant for congestion
+sender says i am sending i am sending urgent data with a flag U and that tells the receiver it should process taht data first
+but its not really used in practiced
+its a lot of overhead for not that much of an advantage
+
+Sequence numbers in TCP:
+-byte stream "number" of first byte in segment's data
+Acknowledgments:
+-seq # of the next byte expected ....
+
+Simple telnet scenario:
+So lets say the user sends the letter 'C' u type in C the host its gonna start with whatever sequence numebr its on and it will send the next byte
+its sending data on its own its sending the data back and it had its own sequence number
+the hsot A is going to send a messge with its sequence number and it als sends the hsot b should send me the sequenc enumber 80
+
+so at the tcp handshake each side starts with a sequence number for our purposes we always start from 0(relative) but its actually random big no(raw)
+
+TCP round trip time, timeout:
+Q: how to set TCP timeout value?
+-longer thatn RTT, but RTT varies!
+-too short: premature timeout, unnecessary....
+
+you don't have to knwo this formula for the midterm!!!!
