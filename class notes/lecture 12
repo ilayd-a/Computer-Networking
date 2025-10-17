@@ -1,0 +1,31 @@
+command line tools for the midterm would be true/false or multiple choice
+
+The performance of our protocol, we introduced sth called utilization
+so as we saw with rdt 3.0 its quite terrible in terms of performance it waits a lot cuz we did this stop and wait mechanism
+then we talked about two methods to overcome that to make our performance better
+so the core concept of what we r talking about is pipelining we introduce more sequence numbers
+once we introduced our new pipelining approach its guaranteed that the messages are arrived in order and each message indivifdually arrives
+go back n:
+the receiver tells the sender which number it expects
+if its out of order it knows sth is messed up
+
+the other approach we talked about:
+each side is doing a bit more work
+when sth arrives out of order the receiver is going to buffer those messages and then the sender keeps track of the
+packets that arrived but acks did not come in order
+and it had a timer for each packet
+
+if TCP is byte stream oriented the relationship between a sequence number and an acknowledgment number is
+sequence number is the byte number we r starting from
+acknowledgement number is the next byte thats expected from the other side
+TCP is forward duplex so both the receiver and the sender send each other data
+
+we wanna ensure that we set an optimal timeout time
+the equations for this doesn't matter (we don't go over the math in class)
+
+TCP sender (simplified)
+its gonna get an application level message and its gonna create its own segment with its seq #
+if it gets an ACK and that ACK acknowledges things that it hasn't received yet it updates what is known to be ACKed
+
+TCP flow control
+ensure that the sender doesn't overwhelm the receiver
